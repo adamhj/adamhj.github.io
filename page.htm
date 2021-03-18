@@ -1,0 +1,71 @@
+<html>
+<head>
+	<title>Untitled</title>
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+
+<style>
+div#hidden {
+    width: 800px;
+    height: 600px;
+    display: None;
+    margin: auto;
+    border: 3px black solid;
+    background-color: #ffaf30;
+    color: #ff0000;
+    font-size: 5vw;
+    text-align: center;
+}
+</style>
+
+<body>
+
+<div id=content>Hello World!</div>
+<div id=hidden>Hidden content!</div>
+
+<script>
+$(function() {
+    // alert(123);
+    $('div#content').trigger('click');
+});
+
+var redirect_flag = false;
+
+function showPage() {
+    redirect_flag = true;
+    window.location = 'http://www.163.com/';
+};
+
+function showMsg() {
+    $('div#hidden').show();
+}
+
+$(window).on('beforeunload', function(e) {
+    if (!redirect_flag) {
+        console.log('beforeunload:', e);
+        showMsg();
+        if(!e) e = window.event;
+        //e.cancelBubble is supported by IE - this will kill the bubbling process.
+        e.cancelBubble = true;
+        e.returnValue = 'You sure you want to leave?'; //This is displayed on the dialog
+
+        //e.stopPropagation works in Firefox.
+        if (e.stopPropagation) {
+            e.stopPropagation();
+            e.preventDefault();
+        }
+        return '';
+    }
+});
+
+$(window).on('visibilitychange', function(e) {
+    console.log('visibilitychange:', e);
+    console.log(document.visibilityState);
+    if (document.visibilityState == 'hidden' || document.visibilityState == 'unloaded') {
+        showMsg();
+    }
+});
+
+</script>
+</body>
+</html>
